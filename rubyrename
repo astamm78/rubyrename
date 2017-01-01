@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+# Place in system path. For example: /usr/local/bin/rubyrename
+
+dir_path  = ARGV[0]
+base_name = ARGV[1]
+counter   = ARGV[2].to_i
+padding   = ARGV[3].to_i
+
+help_statement = "Example: 'rubyrename {Directory Path} {New File Base Name} {Numbering Start} {Numbering Padding}'"
+
+if ARGV[0] == "help" || ARGV.count == 0
+  puts help_statement
+elsif ARGV.count < 4
+  puts "ERROR: Incorrect number of arguments. Expected 4, received #{ARGV.count}"
+  puts help_statement
+else
+  Dir.entries(dir_path).each do |file_path|
+    next if file_path == "." || file_path == ".." || file_path == ".DS_Store"
+
+    extension = file_path.match /\.[^.]*$/
+
+    dest_path = "#{dir_path}/#{base_name}#{counter.to_s.rjust(padding, '0')}#{extension}"
+
+    unless File.exists?(dest_path)
+      File.rename("#{dir_path}/#{file_path}", dest_path)
+    end
+
+    counter += 1
+  end
+end
